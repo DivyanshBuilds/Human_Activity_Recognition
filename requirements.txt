@@ -1,0 +1,18 @@
+# Data Manipulation
+numpy
+pandas
+scipy
+
+# Visualization
+matplotlib
+seaborn
+
+# Machine Learning
+scikit-learn
+xgboost
+lightgbm
+
+# Utilities
+joblib
+
+xgboost

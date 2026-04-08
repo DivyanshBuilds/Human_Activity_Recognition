@@ -1,0 +1,24 @@
+# python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.pyc
+
+# virtual environment
+venv/
+env/
+
+# jupyter
+.ipynb_checkpoints/
+
+# data - raw files are large, no need to push
+data/raw/
+
+# models - pkl files can be large
+models/
+
+# os
+.DS_Store
+Thumbs.db
