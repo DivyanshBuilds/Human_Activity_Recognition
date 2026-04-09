@@ -16,9 +16,6 @@ env/
 # data - raw files are large, no need to push
 data/raw/
 
-# models - pkl files can be large
-models/
-
 # os
 .DS_Store
 Thumbs.db

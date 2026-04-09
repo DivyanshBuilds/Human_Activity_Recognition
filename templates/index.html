@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Activity Recognition</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #e8f0fe; color: #333; min-height: 100vh; padding: 40px 20px; }
+        .container { max-width: 750px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 36px; }
+        .header h1 { font-size: 32px; font-weight: 700; color: #1a1a2e; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .header p { color: #666; font-size: 15px; margin-top: 8px; }
+        .card { background: white; border-radius: 12px; padding: 32px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .field-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #555; margin-bottom: 8px; display: block; }
+        select { width: 100%; padding: 14px 16px; border: 1.5px solid #dde3f0; border-radius: 8px; font-size: 15px; background: white; color: #333; margin-bottom: 24px; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+        select:focus { outline: none; border-color: #4a90d9; }
+        button { width: 100%; padding: 16px; background: #4a90d9; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; letter-spacing: 0.03em; transition: background 0.2s; }
+        button:hover { background: #3a7bc8; }
+        .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .result-box { padding: 24px 20px; border-radius: 10px; text-align: center; }
+        .result-box .label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+        .result-box .value { font-size: 20px; font-weight: 700; }
+        .actual { background: #eff6ff; }
+        .actual .label { color: #3b82f6; }
+        .actual .value { color: #1d4ed8; }
+        .predicted-correct { background: #f0fdf4; }
+        .predicted-correct .label { color: #22c55e; }
+        .predicted-correct .value { color: #15803d; }
+        .predicted-wrong { background: #fef2f2; }
+        .predicted-wrong .label { color: #ef4444; }
+        .predicted-wrong .value { color: #b91c1c; }
+        .verdict { text-align: center; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; letter-spacing: 0.03em; }
+        .verdict.correct { background: #f0fdf4; color: #15803d; }
+        .verdict.wrong { background: #fef2f2; color: #b91c1c; }
+        .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #555; margin-bottom: 20px; }
+        .feature-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .feature-table th { text-align: left; padding: 10px 14px; background: #f5f7fb; color: #888; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid #eee; }
+        .feature-table th:last-child { text-align: right; }
+        .feature-table td { padding: 11px 14px; border-bottom: 1px solid #f3f4f6; }
+        .feature-table tr:last-child td { border-bottom: none; }
+        .feature-table tr:hover td { background: #fafbff; }
+        .feature-name { color: #4a90d9; font-family: monospace; font-size: 13px; }
+        .feature-value { text-align: right; font-weight: 600; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Human Activity Recognition</h1>
+            <p>Select a test sample from the dropdown to see the model's prediction</p>
+            <div style="display:inline-flex;gap:16px;margin-top:14px;">
+                <span style="background:white;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;color:#4a90d9;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+                    Model: SVM — RBF Kernel
+                </span>
+                <span style="background:white;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;color:#15803d;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+                    Accuracy: 95.52%
+                </span>
+            </div>
+        </div>
+
+        <div class="card" style="font-size:14px;line-height:1.8;color:#555;">
+            <div class="section-title">About This App</div>
+            <p>
+                This app demonstrates a machine learning model trained to classify human physical activities
+                using smartphone sensor data. The dataset is sourced from the
+                <a href="https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones"
+                   target="_blank" style="color:#4a90d9;text-decoration:none;font-weight:500;">UCI Machine Learning Repository</a>
+                and contains recordings from 30 volunteers performing 6 activities — Walking, Walking Upstairs,
+                Walking Downstairs, Sitting, Standing, and Laying — while wearing a Samsung Galaxy S II on their waist.
+            </p>
+            <br>
+            <p>
+                Each <strong>sample</strong> in the dropdown represents one 2.56-second window of sensor data,
+                described by 561 features extracted from the phone's accelerometer and gyroscope.
+                These are real unseen test samples — people the model was never trained on.
+                Select any sample and click Predict to see how the model classifies that activity.
+            </p>
+        </div>
+
+        <div class="card">
+            <label class="field-label">Select Test Sample</label>
+            <form method="POST">
+                <select name="sample_index">
+                    {% for idx in sample_indices %}
+                        <option value="{{ idx }}" {% if idx == selected_index %}selected{% endif %}>
+                            Sample {{ idx }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Predict Activity</button>
+            </form>
+        </div>
+
+        {% if prediction %}
+        <div class="card">
+            <div class="section-title">Result</div>
+            <div class="result-grid">
+                <div class="result-box actual">
+                    <div class="label">Actual Activity</div>
+                    <div class="value">{{ actual }}</div>
+                </div>
+                <div class="result-box {{ 'predicted-correct' if correct else 'predicted-wrong' }}">
+                    <div class="label">Predicted Activity</div>
+                    <div class="value">{{ prediction }}</div>
+                </div>
+            </div>
+            <div class="verdict {{ 'correct' if correct else 'wrong' }}">
+                {% if correct %}
+                    Correct Prediction
+                {% else %}
+                    Wrong Prediction
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">Top 10 Features</div>
+            <table class="feature-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for name, value in features.items() %}
+                    <tr>
+                        <td class="feature-name">{{ name }}</td>
+                        <td class="feature-value">{{ value }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
